@@ -26,8 +26,13 @@ class Images(Resource):
         return {"image": images[id]}
 
 
+class File(Resource):
+    def get(self, path):
+        return send_from_directory('data', path)
+
+
 api.add_resource(HelloWorld, "/")
 api.add_resource(Images, "/api/image/<string:id>")
-
+api.add_resource(File, "/data/<path:path>")
 if __name__ == '__main__':
     app.run(debug=True)
