@@ -25,8 +25,14 @@ class HelloWorld(Resource):
 
 
 class Images(Resource):
-    def get(self, id):
-        return {"image": images[id]}
+    def get(self):
+        args = request.args
+        if(args.get('id') != None):
+            if int(args['id']) > len(images):
+                return {"error": "Not Found"}, 404
+            return {"image": images[args['id']]}
+        else:
+            return {"images": images}
 
     def post(self):
         likes = request.form.get('likes')
