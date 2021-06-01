@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory, request, json
 from flask_restful import Api, Resource
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -8,25 +8,19 @@ app = Flask(__name__)
 api = Api(app)
 app.config['DEBUG'] = True
 
-images = {
-    1: {
-        "image": "./data/images/sunset.jpg",
-        "title": "Sunset 🌅",
-        "likes": 0,
-        "author": "Sparsh"
-    },
-    2: {
-        "image": "./data/images/scene.jpg",
-        "likes": 0,
-        "title": "Scenery 🌙",
-        "author": "Sparsh"
-    }
-}
+f = open('./data/data.json', 'r')
+images = json.load(f)
+print(images['1'])
+
+
+def updateJSON(images):
+    with open('./data/data.json', 'w') as outfile:
+        json.dump(images, outfile)
 
 
 class HelloWorld(Resource):
     def get(self):
-        return {"message": "Hello World! Welcome to Gallery 🤗"}
+        return {"message": "Hello World! Welcome to Gallery API 🤗"}
 
 
 class Images(Resource):
@@ -37,7 +31,7 @@ class Images(Resource):
                 id = int(args['id'])
                 if int(args['id']) > len(images):
                     return {"error": "Not Found"}, 404
-                return {"image": images[int(args['id'])]}
+                return {"image": images[args['id']]}
             except:
                 return {"error": "Invalid Id"}, 404
         return {"images": images}
@@ -50,12 +44,13 @@ class Images(Resource):
         path = f'{str(datetime.timestamp(datetime.now())).split(".")[0]}_{image.filename}'
         image.save(os.path.join('data/images/',
                                 secure_filename(path)))
-        images[len(images)+1] = {
+        images[str(len(images)+1)] = {
             'likes': int(likes),
             'image': f'/data/images/{path}',
             'author': author,
             "title": title
         }
+        updateJSON(images)
         return {"images": images}
 
 
@@ -69,6 +64,7 @@ class Like(Resource):
         if(int(id) > len(images)):
             return {"error": "Not Found"}, 404
         images[id]["likes"] += 1
+        updateJSON(images)
         return {"image": images[id]}
 
 
