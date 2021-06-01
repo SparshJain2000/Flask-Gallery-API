@@ -11,12 +11,14 @@ app.config['DEBUG'] = True
 images = {
     "1": {
         "image": "./data/images/sunset.jpg",
+        "title": "Sunset 🌅",
         "likes": 0,
         "author": "Sparsh"
     },
     "2": {
         "image": "./data/images/scene.jpg",
         "likes": 0,
+        "title": "Scenery 🌙",
         "author": "Sparsh"
     }
 }
@@ -24,7 +26,7 @@ images = {
 
 class HelloWorld(Resource):
     def get(self):
-        return {"message": "Hello World"}
+        return {"message": "Hello World! Welcome to Gallery 🤗"}
 
 
 class Images(Resource):
@@ -40,6 +42,7 @@ class Images(Resource):
     def post(self):
         likes = request.form.get('likes')
         author = request.form.get('author')
+        title = request.form.get('title')
         image = request.files.get('image')
         path = f'{str(datetime.timestamp(datetime.now())).split(".")[0]}_{image.filename}'
         image.save(os.path.join('data/images/',
@@ -47,7 +50,8 @@ class Images(Resource):
         images[len(images)+1] = {
             'likes': int(likes),
             'image': f'/data/images/{path}',
-            'author': author
+            'author': author,
+            "title": title
         }
         return {"images": images}
 
