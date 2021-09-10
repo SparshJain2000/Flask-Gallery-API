@@ -7,7 +7,7 @@
 #### Clone the repository
 
 ```bash
-git clone https://github.com/SparshJain2000/Jobhub.git
+git clone https://github.com/SparshJain2000/Flask-Gallery-API.git
 ```
 
 #### Declare environment variables
